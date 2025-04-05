@@ -73,7 +73,7 @@ resource "aws_instance" "app_server" {
               # Wait a bit to ensure Docker is ready
               sleep 10
               # Run the app container
-              docker run -d -p 4000:4000 mechykmariana/hospital-appointment-app:latest
+              docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
             EOF
 
 }
