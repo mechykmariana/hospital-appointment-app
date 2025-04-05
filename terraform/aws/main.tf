@@ -16,7 +16,7 @@ provider "aws" {
 // Create new SSH key pair for EC2 instance
 resource "aws_key_pair" "thesis_key_pair" {
     key_name = var.key_name
-    public_key = var.public_key_path // Public key file path from local machine
+    public_key = file("${path.module}/id_rsa.pub") // Public key file path from local machine
 }
 
 // Define a security group to allow SSH (port 22), app traffic (port 4000), and Prometheus (port 9090)
