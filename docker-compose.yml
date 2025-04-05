@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  jenkins:
+    build:
+      context: ./jenkins
+    ports:
+      - "8080:8080"  # Jenkins UI port
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: ./app
+    ports:
+      - "4000:4000"  # App port for backend
+      - "3000:3000"  # App port for frontend
+    networks:
+      - app-network
+    depends_on:
+      - prometheus
+      - jenkins
+
+  prometheus:
+    build:
+      context: ./prometheus
+    ports:
+      - "9090:9090"  # Prometheus UI port
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  jenkins_home:
+
