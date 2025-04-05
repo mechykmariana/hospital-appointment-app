@@ -2,67 +2,61 @@ pipeline{
     agent any
 
     environment {
-        TF_VAR_regin = "eu-north-1"
+        AWS_REGION = "eu-north-1"
     }
 
     stages {
-        stage('Checkout Code') {
+
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/mechykmariana/hospital-appointment-app.git'
+                git credentialsId: 'your-git-credentials-id', url: 'https://github.com/mechykmariana/hospital-appointment-app.git', branch: 'main'
             }
         }
 
-        stage('Terrafrm init - AWS') {
+        stage('Install Terraform') {
             steps {
-                // go to the directiry with the terraform code for AWS and run the init command (to initialize the backend)
+                sh '''
+                if ! command -v terraform &> /dev/null; then
+                    echo "Installing Terraform..."
+                    apt-get update && apt-get install -y gnupg software-properties-common curl
+                    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+                    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+                    apt-get update && apt-get install -y terraform
+                fi
+                '''
+            }
+        }
+
+        stage('Deploy to AWS') {
+            steps {
                 dir('terraform/aws') {
-                    sh 'terraform init'
+                withAWS(credentials: 'aws-credentials', region: "${env.AWS_REGION}") {
+                    sh '''
+                    cd terraform/aws
+                    terraform init
+                    terraform apply -auto-approve
+                    '''
+                    }
                 }
             }
         }
 
-        stage('Terrafrm plan - AWS') {
+        stage('Deploy to Azure') {
             steps {
-                // go to the directiry with the terraform code for AWS and run the plan command (to plan the changes)
-                dir('terraform/aws') {
-                    sh 'terraform plan'
-                }
-            }
-        }
-
-        stage('Terrafrm apply - AWS') {
-            steps {
-                // go to the directiry with the terraform code for AWS and run the apply command (to apply and deploy the changes)
-                dir('terraform/aws') {
-                    sh 'terraform apply -auto-approve'
-                }
-            }
-        }
-
-        stage('Terraform Init - Azure') {
-            steps {
-                // go to the directiry with the terraform code for Azure and run the apply command (to apply and deploy the changes)
                 dir('terraform/azure') {
-                    sh 'terraform init'
-                }
-            }
-        }
-
-        stage('Terrafrm plan - Azure') {
-            steps {
-                // go to the directiry with the terraform code for Azure and run the plan command (to plan the changes)
-                dir('terraform/azure') {
-                    sh 'terraform plan'
-                }
-            }
-        }
-
-        stage('Terrafrm apply - Azure') {
-            steps {
-                // go to the directiry with the terraform code for Azure and run the apply command (to apply and deploy the changes)
-                dir('terraform/azure') {
-                    sh 'terraform apply -auto-approve'
-                }
+                withCredentials([azureServicePrincipal(
+                    credentialsId: 'azure-creds',
+                    subscriptionIdVariable: 'ARM_SUBSCRIPTION_ID',
+                    clientIdVariable: 'ARM_CLIENT_ID',
+                    clientSecretVariable: 'ARM_CLIENT_SECRET',
+                    tenantIdVariable: 'ARM_TENANT_ID'
+                )]) {
+                    sh '''
+                    terraform init
+                    terraform apply -auto-approve
+                    '''
+                    }
+                }       
             }
         }
     }
