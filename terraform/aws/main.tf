@@ -62,16 +62,14 @@ resource "aws_instance" "app_server" {
 
     // Bootstrap script to run on instance startup
     user_data = <<-EOF
-                #!/bin/bash
+              #!/bin/bash
               exec > /var/log/user-data.log 2>&1
-
-              sudo yum update -y
-              sudo yum install -y docker
-              sudo systemctl start docker
-              sudo systemctl enable docker
+              yum update -y
+              yum install -y docker
+              systemctl start docker
+              systemctl enable docker
               usermod -aG docker ec2-user
-              sleep 10
               docker run -d -p 4000:4000 mechykmariana/hospital-appointment-app:latest
-              EOF
+            EOF
 
 }
