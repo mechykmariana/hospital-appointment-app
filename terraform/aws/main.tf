@@ -64,11 +64,15 @@ resource "aws_instance" "app_server" {
     user_data = <<-EOF
               #!/bin/bash
               exec > /var/log/user-data.log 2>&1
+              set -x
+              # Update and install Docker
               yum update -y
-              yum install -y docker
+              amazon-linux-extras install docker -y
               systemctl start docker
               systemctl enable docker
-              usermod -aG docker ec2-user
+              # Wait a bit to ensure Docker is ready
+              sleep 10
+              # Run the app container
               docker run -d -p 4000:4000 mechykmariana/hospital-appointment-app:latest
             EOF
 
