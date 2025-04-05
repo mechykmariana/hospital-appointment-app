@@ -44,6 +44,13 @@ resource "aws_security_group" "allow_http" {
         protocol    = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
+
+    ingress {
+        from_port   = 3000
+        to_port     = 3000
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
     // Allow all outbound traffic (required for downloading packages, Docker image, etc.)
     egress {
         from_port   = 0
@@ -79,7 +86,7 @@ resource "aws_instance" "app_server" {
                   # Pull image (ensure it exists)
                   docker pull marianamechyk/hospital-appointment-app:latest
                   # Run your app
-                  docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
+                  docker run -d -p 3000:3000 -p 4000:4000 marianamechyk/hospital-appointment-app:latest
                 EOF
 
 }
