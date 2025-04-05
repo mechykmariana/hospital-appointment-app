@@ -62,18 +62,24 @@ resource "aws_instance" "app_server" {
 
     // Bootstrap script to run on instance startup
     user_data = <<-EOF
-                #!/bin/bash
-                exec > /var/log/user-data.log 2>&1
-                set -x
-                # Update and install Docker
-                yum update -y
-                amazon-linux-extras install docker -y
-                systemctl start docker
-                systemctl enable docker
-                # Wait a bit to ensure Docker is ready
-                sleep 10
-                # Run the app container
-                docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
+                  #!/bin/bash
+                  exec > /var/log/user-data.log 2>&1
+                  set -x
+                  # Install Docker
+                  yum update -y
+                  yum install -y docker
+                  systemctl start docker
+                  systemctl enable docker
+                  # Wait until Docker is fully ready
+                  until docker info >/dev/null 2>&1; do
+                    sleep 2
+                  done
+                  # Authenticate to Docker Hub (optional if public)
+                  # echo "<DOCKERHUB_PASSWORD>" | docker login -u <DOCKERHUB_USERNAME> --password-stdin
+                  # Pull image (ensure it exists)
+                  docker pull marianamechyk/hospital-appointment-app:latest
+                  # Run your app
+                  docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
                 EOF
 
 }
