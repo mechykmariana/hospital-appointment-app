@@ -18,7 +18,6 @@ pipeline{
                 dir('terraform/aws') {
                 withAWS(credentials: 'aws-credentials', region: "${env.AWS_REGION}") {
                     sh '''
-                    cd terraform/aws
                     terraform init
                     terraform apply -auto-approve
                     '''
