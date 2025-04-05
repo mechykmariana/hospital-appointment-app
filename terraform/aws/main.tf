@@ -24,7 +24,7 @@ resource "aws_security_group" "allow_http" {
     name = "allow-http"
     description = "allow http and ssh traffic"
 
-    ingress = {
+    ingress {
         from_port = 22
         to_port = 22
         protocol = "tcp"

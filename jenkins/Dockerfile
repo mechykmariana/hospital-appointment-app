@@ -37,6 +37,7 @@ USER jenkins
 # Install Jenkins plugins
 RUN jenkins-plugin-cli --plugins \
     aws-credentials \
+    pipeline-aws \
     azure-credentials \
     docker-workflow \
     pipeline-utility-steps \
