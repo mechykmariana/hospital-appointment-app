@@ -16,8 +16,11 @@ RUN pip install psycopg2-binary
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY frontend/ /app/frontend/
-WORKDIR /app/frontend
-RUN npm install && npm run build
+
+RUN cd frontend && npm install && npm run build
+
+#WORKDIR /app/frontend
+#RUN npm install && npm run build
 
 WORKDIR /app
 # Copy the backend and frontend code
