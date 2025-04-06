@@ -13,6 +13,12 @@ pipeline{
             }
         }
 
+        stage('Check Docker Access') {
+            steps {
+                sh 'docker ps'
+            }
+        }
+        
         stage('Docker Compose Up') {
             steps {
                 sh 'docker-compose down || true'     // Clean up previous containers
