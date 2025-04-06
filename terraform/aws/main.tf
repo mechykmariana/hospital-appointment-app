@@ -95,6 +95,8 @@ resource "aws_instance" "app_server" {
                 sleep 10
                 docker pull marianamechyk/hospital-appointment-app:latest
                 docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
+                docker pull prom/prometheus:latest
+                docker run -d -p 9090:9090 prom/prometheus:latest
                 EOF
 
 
