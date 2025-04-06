@@ -22,7 +22,6 @@ RUN npm install && npm run build
 WORKDIR /app
 # Copy the backend and frontend code
 COPY backend/ /app/backend/
-COPY --from=0 /app/frontend/build /app/frontend/build
 
 # Expose the port that the app will run on
 #EXPOSE 4000 3000
