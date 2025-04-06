@@ -285,9 +285,9 @@ class Logout(Resource):
 api.add_resource(Logout,"/logout")
 
 # Catch-all route to serve React frontend routes
-@app.route('/', defaults={'path': ''})
+@app.route('/')
 @app.route('/<path:path>')
-def serve_react_app(path):
+def serve(path=''):
     if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     else:
