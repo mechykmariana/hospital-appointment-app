@@ -1,10 +1,9 @@
 # Use Python official image
-FROM python:3.8-slim-buster
+FROM python:3.8-slim
 
 # Install Node.js for the frontend
 RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    apt-get clean
+    apt-get install -y nodejs npm
 
 # Set working directory inside the container
 WORKDIR /app
@@ -17,18 +16,19 @@ RUN pip install psycopg2-binary
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Build frontend
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npm run build
+# Install frontend dependencies
+COPY frontend/package*.json /app/frontend/
+RUN cd /app/frontend && npm install
 
-# Serve frontend from backend
+# Copy the backend and frontend code
+COPY backend/ /app/backend/
+COPY frontend/ /app/frontend/
+
+# Expose the port that the app will run on
+#EXPOSE 4000 3000
+
+ENV PORT=3000
+
 WORKDIR /app
-
-EXPOSE 4000
-
-# Serve static files from Flask or with nginx (option below)
-
-CMD ["sh", "-c", "cd /app/backend && python app.py"]
+# Run the application
+CMD ["sh", "-c", "cd /app/backend && python app.py & cd /app/frontend && npm start"]
