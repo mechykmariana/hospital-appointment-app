@@ -6,10 +6,22 @@ pipeline{
     }
 
     stages {
+        stage('Deploy to AWS') {
+            steps {
+                dir('terraform/aws') {
+                withAWS(credentials: 'aws-credentials', region: "${env.AWS_REGION}") {
+                    sh '''
+                    terraform init
+                    terraform apply -auto-approve
+                    '''
+                    }
+                }
+            }
+        }
 
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'your-git-credentials-id', url: 'https://github.com/mechykmariana/hospital-appointment-app.git', branch: 'main'
+                git credentialsId: 'mechykmariana', url: 'https://github.com/mechykmariana/hospital-appointment-app.git', branch: 'main'
             }
         }
 
@@ -25,18 +37,7 @@ pipeline{
                 sh 'sudo docker-compose up -d --build'    // Build and run all containers
             }
         }
-        stage('Deploy to AWS') {
-            steps {
-                dir('terraform/aws') {
-                withAWS(credentials: 'aws-credentials', region: "${env.AWS_REGION}") {
-                    sh '''
-                    terraform init
-                    terraform apply -auto-approve
-                    '''
-                    }
-                }
-            }
-        }
+        
 
     //     stage('Deploy to Azure') {
     //         steps {
