@@ -13,6 +13,12 @@ pipeline{
             }
         }
 
+        stage('Docker Compose Up') {
+            steps {
+                sh 'docker-compose down || true'     // Clean up previous containers
+                sh 'docker-compose up -d --build'    // Build and run all containers
+            }
+
         stage('Deploy to AWS') {
             steps {
                 dir('terraform/aws') {
