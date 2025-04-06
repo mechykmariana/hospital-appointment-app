@@ -15,8 +15,8 @@ from models import db, User, Appointment, Patient,Staff
 app = Flask(
     __name__,
     static_url_path='',
-    static_folder='static',
-    template_folder='static'
+    static_folder='../frontend/build',
+    template_folder='../frontend/build'
     )
 # bcrypt= Bcrypt(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hospital.db'
