@@ -69,18 +69,16 @@ resource "aws_instance" "app_server" {
 
     // Bootstrap script to run on instance startup
     user_data = <<-EOF
-                  #!/bin/bash
-                  exec > /var/log/user-data.log 2>&1
-                  set -x
-    
-                  apt update -y
-                  apt install -y docker.io
-                  systemctl start docker
-                  systemctl enable docker
-    
-                  sleep 10
-                  docker pull marianamechyk/hospital-appointment-app:latest
-                  docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
+                #!/bin/bash
+                exec > /var/log/user-data.log 2>&1
+                set -x
+                apt update -y
+                apt install -y docker.io
+                systemctl start docker
+                systemctl enable docker
+                sleep 10
+                docker pull marianamechyk/hospital-appointment-app:latest
+                docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
                 EOF
 
 
