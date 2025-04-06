@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y \
 RUN groupadd -g 1001 docker || true \
     && usermod -aG docker jenkins
 
+RUN echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 # Install AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && ./aws/install && rm -rf awscliv2.zip aws

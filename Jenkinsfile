@@ -15,14 +15,14 @@ pipeline{
 
         stage('Check Docker Access') {
             steps {
-                sh 'docker ps'
+                sh 'sudo docker ps'
             }
         }
-        
+
         stage('Docker Compose Up') {
             steps {
-                sh 'docker-compose down || true'     // Clean up previous containers
-                sh 'docker-compose up -d --build'    // Build and run all containers
+                sh 'sudo docker-compose down || true'     // Clean up previous containers
+                sh 'sudo docker-compose up -d --build'    // Build and run all containers
             }
         }
         stage('Deploy to AWS') {
