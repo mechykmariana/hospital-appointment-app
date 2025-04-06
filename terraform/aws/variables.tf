@@ -19,11 +19,11 @@ variable "public_key_path" {
 variable "instance_type" {
   description = "Type of AWS EC2 instance"
   type        = string
-  default     = "t3.micro"
+  default     = "t3.small"
 }
 
 variable "ami_id" {
   description = "Amazon Machine Image ID for EC2 instance"
   type        = string
-  default     = "ami-0274f4b62b6ae3bd5"
+  default     = "ami-0c1ac8a41498c1a9c"
 }
