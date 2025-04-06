@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates
 
 # Add Docker group to Jenkins user
-RUN usermod -aG docker jenkins
+RUN groupadd -g 1001 docker || true \
+    && usermod -aG docker jenkins
 
 # Install AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
