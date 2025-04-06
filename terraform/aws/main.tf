@@ -60,9 +60,25 @@ resource "aws_security_group" "allow_http" {
   }
 }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
 // Create ec2 instance with Docker and conainer for app automatically running inside
 resource "aws_instance" "app_server" {
-    ami = var.ami_id
+    ami = data.aws_ami.ubuntu.id
     instance_type = var.instance_type
     key_name = aws_key_pair.thesis_key_pair.key_name
     vpc_security_group_ids = [aws_security_group.allow_http.id]

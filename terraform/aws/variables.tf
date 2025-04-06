@@ -21,9 +21,3 @@ variable "instance_type" {
   type        = string
   default     = "t3.medium"
 }
-
-variable "ami_id" {
-  description = "Amazon Machine Image ID for EC2 instance"
-  type        = string
-  default     = "ami-0c1ac8a41498c1a9c"
-}
