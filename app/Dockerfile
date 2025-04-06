@@ -23,13 +23,13 @@ WORKDIR /app
 # Copy the backend and frontend code
 COPY backend/ /app/backend/
 
-# Expose the port that the app will run on
-#EXPOSE 4000 3000
+# Move React build to Flask static directory
+RUN mkdir -p /app/backend/static && cp -r /app/frontend/build/* /app/backend/static/
 
 # Expose ports
-EXPOSE 3000
+#EXPOSE 3000
 EXPOSE 4000
 
-WORKDIR /app
+WORKDIR /app/backend
 # Run the application
 CMD ["sh", "-c", "cd /app/backend && python app.py"]

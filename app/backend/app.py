@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, make_response, request, jsonify, render_template
+from flask import Flask, make_response, request, jsonify, render_template, send_from_directory
 from prometheus_flask_exporter import PrometheusMetrics
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
@@ -15,8 +15,8 @@ from models import db, User, Appointment, Patient,Staff
 app = Flask(
     __name__,
     static_url_path='',
-    static_folder='../frontend/build',
-    template_folder='../frontend/build'
+    static_folder='static',
+    template_folder='static'
     )
 # bcrypt= Bcrypt(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hospital.db'
@@ -283,6 +283,16 @@ class Logout(Resource):
         return {'message':'logged out'}
 
 api.add_resource(Logout,"/logout")
+
+# Catch-all route to serve React frontend routes
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react_app(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000)
