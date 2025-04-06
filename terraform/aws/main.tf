@@ -72,21 +72,16 @@ resource "aws_instance" "app_server" {
                   #!/bin/bash
                   exec > /var/log/user-data.log 2>&1
                   set -x
-                  # Install Docker
-                  yum update -y
-                  yum install -y docker
+    
+                  apt update -y
+                  apt install -y docker.io
                   systemctl start docker
                   systemctl enable docker
-                  # Wait until Docker is fully ready
-                  until docker info >/dev/null 2>&1; do
-                    sleep 2
-                  done
-                  # Authenticate to Docker Hub (optional if public)
-                  # echo "<DOCKERHUB_PASSWORD>" | docker login -u <DOCKERHUB_USERNAME> --password-stdin
-                  # Pull image (ensure it exists)
+    
+                  sleep 10
                   docker pull marianamechyk/hospital-appointment-app:latest
-                  # Run your app
-                  docker run -d -p 3000:3000 -p 4000:4000 marianamechyk/hospital-appointment-app:latest
+                  docker run -d -p 4000:4000 marianamechyk/hospital-appointment-app:latest
                 EOF
+
 
 }
