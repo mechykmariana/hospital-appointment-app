@@ -1,39 +1,34 @@
-# Use Python 3.8 base image
+# Use Python official image
 FROM python:3.8-slim
 
-# Install dependencies for Python and Node.js
+# Install Node.js for the frontend
 RUN apt-get update && \
-    apt-get install -y nodejs npm curl && \
-    apt-get clean
+    apt-get install -y nodejs npm
 
-# Set working directory
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy and install backend Python dependencies
+# Copy requirements.txt and install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Install PostgreSQL driver separately
+# Install library
 RUN pip install psycopg2-binary
 
-# Copy backend and frontend source
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install frontend dependencies
+COPY frontend/package*.json /app/frontend/
+RUN cd /app/frontend && npm install
+
+# Copy the backend and frontend code
 COPY backend/ /app/backend/
 COPY frontend/ /app/frontend/
 
-# Install frontend dependencies
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install
+# Expose the port that the app will run on
+#EXPOSE 4000 3000
 
-# Build frontend (optional if you're using static files)
-# RUN npm run build
+ENV PORT=3000
 
-# Go back to root app folder
 WORKDIR /app
-
-# Expose ports (optional unless needed)
-EXPOSE 4000
-EXPOSE 3000
-
-# Start both backend and frontend
+# Run the application
 CMD ["sh", "-c", "cd /app/backend && python app.py & cd /app/frontend && npm start"]

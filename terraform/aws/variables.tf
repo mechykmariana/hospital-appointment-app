@@ -7,7 +7,7 @@ variable "region" {
 variable "key_name" {
   description = "The name of the SSH key pair"
   type        = string
-  default     = "id_rsa"
+  default     = "thesis-key"
 }
 
 variable "public_key_path" {
